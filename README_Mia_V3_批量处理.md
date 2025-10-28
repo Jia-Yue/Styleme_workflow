@@ -24,27 +24,26 @@
 api_key=你的API密钥
 
 Batch1
-image1_1=test.png
-image1_2=test2.jpg
-image1_3=test3.png
-prompt1=change clothes of images2 to model in image1
+image1=test.png
+image2=test2.jpg
+image3=test3.png
+prompt=把图2模特的衣服穿到图3的人身上，注意把背景变成图1海边的背景
 
 Batch2
-image2_1=test.png
-image2_2=
-image2_3=
-prompt2=change cloth to red
+image1=test.png
+image2=
+image3=
+prompt=change cloth to red
 ```
 
 ### 配置说明
 
 - `api_key` - Gemini API密钥
 - `Batch1`, `Batch2` - 批次标识
-- `image1_1`, `image1_2`, `image1_3` - 第一批次的三个图片
-- `image2_1`, `image2_2`, `image2_3` - 第二批次的三个图片
-- `prompt1`, `prompt2` - 对应批次的提示词
+- `image1`, `image2`, `image3` - 每个批次的三个图片
+- `prompt` - 每个批次的提示词
 
-**注意**：如果某个图片字段为空（如 `image2_2=`），脚本会自动跳过该图片输入。
+**注意**：如果某个图片字段为空（如 `image2=`），脚本会自动跳过该图片输入。
 
 ## 使用方法
 
@@ -76,12 +75,12 @@ prompt2=change cloth to red
 ## 处理示例
 
 ### 批次1处理
-- 输入：`image1_1=test.png`, `image1_2=test2.jpg`, `image1_3=test3.png`
-- 工作流会使用所有三个图片
+- 输入：`image1=test.png`, `image2=test2.jpg`, `image3=test3.png`
+- 工作流会使用所有三个图片，Gemini会看到三张不同的图片
 
 ### 批次2处理
-- 输入：`image2_1=test.png`, `image2_2=`, `image2_3=`
-- 工作流只会使用 `image2_1`，跳过空的 `image2_2` 和 `image2_3`
+- 输入：`image1=test.png`, `image2=`, `image3=`
+- 工作流只会使用 `image1`，跳过空的 `image2` 和 `image3`，Gemini只会看到一张图片
 
 ## 输出文件
 
@@ -121,6 +120,8 @@ prompt2=change cloth to red
 - 使用 Python requests 库与 ComfyUI API 通信
 - 支持深拷贝工作流模板避免数据污染
 - 智能处理空值图片输入
+- 动态调整节点连接：根据实际图片数量自动连接或删除输入
 - 支持超时和错误处理
+- 每个批次使用独立的提示词，通过 `Batch` 标识区分
 
 
