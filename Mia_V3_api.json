@@ -1,0 +1,86 @@
+{
+  "1": {
+    "inputs": {
+      "api_key": "AIzaSyCv8TfP6OPo8-_b-khfm2NF7yZTJF17XGA",
+      "model": "gemini-2.5-flash-image-preview",
+      "prompt": "图1的人物穿图2的衣服，坐在图三的背景里\n",
+      "style": "realistic",
+      "quality": "high",
+      "safety_settings": "block_none",
+      "temperature": 0.7,
+      "top_k": 40,
+      "top_p": 0.95,
+      "max_output_tokens": 1024,
+      "seed": "0",
+      "output_mode": "image_generation",
+      "input_image": [
+        "4",
+        0
+      ],
+      "input_image_2": [
+        "5",
+        0
+      ],
+      "input_image_3": [
+        "6",
+        0
+      ]
+    },
+    "class_type": "GeminiImageGenerator",
+    "_meta": {
+      "title": "Gemini 图像生成器"
+    }
+  },
+  "2": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "保存图像"
+    }
+  },
+  "3": {
+    "inputs": {
+      "images": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "预览图像"
+    }
+  },
+  "4": {
+    "inputs": {
+      "image": "a238a83c-d9d5-4da1-ba73-dfa2a99fb6e5.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "加载图像"
+    }
+  },
+  "5": {
+    "inputs": {
+      "image": "ccfa7976-1420-448b-a1a5-f0e9abe7110e.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "加载图像"
+    }
+  },
+  "6": {
+    "inputs": {
+      "image": "LINE_ALBUM_日系男子穿搭圖鑑_241029_4.jpg"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "加载图像"
+    }
+  }
+}
