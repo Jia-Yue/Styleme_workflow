@@ -12,6 +12,7 @@ import os
 import sys
 from pathlib import Path
 import re
+import csv
 
 class MiaV3BatchProcessor:
     def __init__(self, comfyui_url="http://127.0.0.1:8000"):
@@ -20,14 +21,100 @@ class MiaV3BatchProcessor:
         self.workflow_template = {}
         self.batches = []
         
-    def load_config(self, config_file="image_prompts.txt"):
+    def load_config(self, config_file="image_prompts.csv"):
         """从配置文件加载参数"""
         print(f"正在加载配置文件: {config_file}")
         
         if not os.path.exists(config_file):
             print(f"错误: 配置文件 {config_file} 不存在")
             return False
-            
+        
+        # 检查文件类型
+        if config_file.endswith('.csv'):
+            return self.load_csv_config(config_file)
+        else:
+            return self.load_txt_config(config_file)
+    
+    def load_csv_config(self, config_file):
+        """从CSV文件加载配置"""
+        try:
+            with open(config_file, 'r', encoding='utf-8') as f:
+                content = f.read().strip()
+                if not content:
+                    print(f"  ✗ CSV文件为空")
+                    return False
+                
+                f.seek(0)
+                reader = csv.DictReader(f)
+                
+                # 检查是否有标题行
+                if not reader.fieldnames:
+                    print(f"  ✗ CSV文件格式错误：缺少标题行")
+                    return False
+                
+                print(f"  ✓ CSV标题行: {reader.fieldnames}")
+                
+                # 读取第一行获取API密钥
+                try:
+                    first_row = next(reader)
+                    if 'api_key' in first_row and first_row['api_key']:
+                        self.config['api_key'] = first_row['api_key']
+                        print(f"  ✓ 找到API密钥: {first_row['api_key'][:10]}...")
+                    else:
+                        print("  ✗ 未找到API密钥")
+                        return False
+                except StopIteration:
+                    print(f"  ✗ CSV文件只有标题行，没有数据")
+                    return False
+                
+                # 重置文件指针，跳过标题行
+                f.seek(0)
+                next(reader)  # 跳过标题行
+                
+                # 读取批次数据
+                batch_num = 1
+                for row_num, row in enumerate(reader, 2):
+                    print(f"  处理第{row_num}行: {row}")
+                    
+                    # 跳过空行
+                    if not any(row.values()):
+                        print(f"    跳过空行")
+                        continue
+                    
+                    batch = {}
+                    for key, value in row.items():
+                        if key != 'api_key' and value and value.strip():
+                            batch[key] = value.strip()
+                    
+                    if batch:  # 只添加非空的批次
+                        self.batches.append(batch)
+                        print(f"  ✓ 批次 {batch_num}: {batch}")
+                        valid_images = [k for k, v in batch.items() if k in ['image1', 'image2', 'image3'] and v.strip()]
+                        print(f"    有效图片: {len(valid_images)} 个")
+                        batch_num += 1
+                    else:
+                        print(f"    跳过空批次")
+                
+        except FileNotFoundError:
+            print(f"错误: CSV文件不存在: {config_file}")
+            return False
+        except Exception as e:
+            print(f"错误: 读取CSV文件失败: {e}")
+            print(f"请检查CSV文件格式是否正确")
+            return False
+        
+        if len(self.batches) == 0:
+            print(f"  ✗ 没有找到有效的批次数据")
+            return False
+        
+        print(f"配置加载完成:")
+        print(f"  API Key: {self.config.get('api_key', 'N/A')[:10]}...")
+        print(f"  发现 {len(self.batches)} 个批次")
+        
+        return True
+    
+    def load_txt_config(self, config_file):
+        """从TXT文件加载配置（保持向后兼容）"""
         current_batch = {}
         with open(config_file, 'r', encoding='utf-8') as f:
             for line in f:

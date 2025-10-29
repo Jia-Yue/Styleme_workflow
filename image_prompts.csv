@@ -1,0 +1,4 @@
+api_key,image1,image2,image3,prompt
+AIzaSyC2vtbNqYgj-3b_0bCH-EO7T2iB6qPB4IM,test3.png,test2.jpg,,"collect clothes in image2, put it on the person showed in image1. The image should be in a 16:9 format."
+,test.png,,,draw a cat on the clothes. The image should be in a 16:9 format.
+,test3.png,,,"draw a dog on the clothes, and the person sit down with a cat, The image should be in a 16:9 format."
